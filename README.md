@@ -1,4 +1,5 @@
 # Hybrid XAI Lung Nodule Analysis
+# An Explainable Multi-Modal Deep Learning Framework for Pulmonary Nodule Classification Using the LIDC-IDRI Dataset
 
 - Out of your 1,608 total nodules, exactly 366 of them had an indeterminate score of 3.0.
 ```
