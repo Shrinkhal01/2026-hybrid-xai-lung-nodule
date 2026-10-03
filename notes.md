@@ -28,20 +28,21 @@
     > **Benchmarking:** Finally, it compares the model's performance against established literature (like Traditional SVMs, Standard 3D CNNs, and SOTA models like NoduleX), tracking its trajectory to highly competitive AUC scores.
 
 
-INFORMATION FILE WISE
-1. downloader.ipynb
+## INFORMATION FILE WISE
+
+### 1. downloader.ipynb
 - *Core Libraries in the Setup Phase*
     1. tcia_utils
         - TCIA = The Cancer Imaging Archive
         - Instead of manually downloading ZIP files from a browser, this library allows you to programmatically query and download the exact CT scans you need.
         - Import its nbia (National Biomedical Imaging Archive) module. 
         - This gives you access to functions like ```nbia.getSeries``` to find the files and ```nbia.downloadSeries``` to pull them down.
-    2. google.colab.drive
+###    2. google.colab.drive
         - Google Colab's native utility for interacting with your personal Google Drive.
         - Colab runtimes are temporary (ephemeral). 
         - If you downloaded 80GB of CT scans directly to the Colab instance, they would be deleted as soon as your session closed.
         - By mounting the drive (```drive.mount```), you route the tcia_utils download directly into your persistent Google Drive storage.
-    3. os & sys
+###    3. os & sys
         - Built-in Python libraries for interacting with the operating system.
         - The script uses o```s.makedirs(destination_path, exist_ok=True)``` to safely construct the folder tree (Lung_Nodule_Project/raw_data) inside your Google Drive
         - If the folders already exist, ```exist_ok=True``` prevents the script from crashing and throwing an error.
