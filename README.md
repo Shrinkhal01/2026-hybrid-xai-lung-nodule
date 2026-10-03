@@ -1,11 +1,11 @@
 # Hybrid XAI Lung Nodule Analysis
 # An Explainable Multi-Modal Deep Learning Framework for Pulmonary Nodule Classification Using the LIDC-IDRI Dataset
 
-- Out of your 1,608 total nodules, exactly 366 of them had an indeterminate score of 3.0.
+- Out of 1,608 total nodules, exactly 366 of them had an indeterminate score of 3.0.
 ```
 1,608 - 366 = 1,242
 ```
-- This is why your Sanity Check cell printed out:Total valid nodules for binary classification: 1242
+- This is why the Sanity Check cell printed out:Total valid nodules for binary classification: 1242
 
 - The line that instructs the AI to drop the ambiguous Class -1 (Indeterminate) nodules so it can learn a clear, binary "Benign vs. Malignant" classification is : 
 ```
