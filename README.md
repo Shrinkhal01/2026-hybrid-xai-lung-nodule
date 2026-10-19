@@ -269,8 +269,8 @@ Exp 3 (Explainability)	3D Grad-CAM on Exp 2 model	4 Test Set Nodules (2 True Pos
 --------------------------------------------------------------------------------
 
 [STAGE 3: EXPLAINABILITY & EVALUATION]
-         │                                       │
-         └───────────────┬───────────────────────┘
+         │                                       
+         └───────────────┬───────────────────────
                          ▼
           Quantitative Comparison on Test Set
       (Accuracy, ROC-AUC, Sensitivity, Specificity, F1)
