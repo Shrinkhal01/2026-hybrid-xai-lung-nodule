@@ -247,7 +247,7 @@ Exp 3 (Explainability)	3D Grad-CAM on Exp 2 model	4 Test Set Nodules (2 True Pos
 
 ## 🔹 Stage 1: Dataset Preparation
 
-```text
+```
 ┌───────────────────────────────────────────────────────────────┐
 │                    STAGE 1: DATASET PREPARATION               │
 └───────────────────────────────────────────────────────────────┘
@@ -284,7 +284,7 @@ Raw LIDC-IDRI Dataset
 
 ## 🔹 Stage 2: Model Training & Comparison
 
-```text
+```
 ┌───────────────────────────────────────────────────────────────┐
 │              STAGE 2: MODEL TRAINING & COMPARISON             │
 └───────────────────────────────────────────────────────────────┘
@@ -312,7 +312,7 @@ Raw LIDC-IDRI Dataset
 
 ## 🔹 Stage 3: Explainability & Evaluation
 
-```text
+```
 ┌───────────────────────────────────────────────────────────────┐
 │              STAGE 3: EXPLAINABILITY & EVALUATION             │
 └───────────────────────────────────────────────────────────────┘
