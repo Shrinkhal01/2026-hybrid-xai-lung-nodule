@@ -1,0 +1,206 @@
+Metadata-Version: 2.4
+Name: lung_nodule
+Version: 0.1.0
+Summary: Explainable 3D Deep Learning vs. Classical ML for Lung Nodule Malignancy Prediction on LIDC-IDRI
+Author: 2026-hybrid-xai-lung-nodule contributors
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: scipy
+Requires-Dist: scikit-learn
+Requires-Dist: torch
+Requires-Dist: torchvision
+Requires-Dist: matplotlib
+Requires-Dist: nibabel
+Requires-Dist: Pillow
+Requires-Dist: tqdm
+Provides-Extra: app
+Requires-Dist: streamlit; extra == "app"
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Dynamic: author
+Dynamic: requires-python
+
+# Explainable 3D Deep Learning vs. Classical Machine Learning for Lung Nodule Malignancy Prediction on LIDC-IDRI
+
+An end-to-end volumetric classification and explainable artificial intelligence (XAI) framework on thoracic computed tomography (CT) scans from the **LIDC-IDRI** (Lung Image Database Consortium and Image Database Resource Initiative) cohort.
+
+---
+
+## 1. Project Overview & Problem Statement
+
+Early characterization of pulmonary nodules is essential for effective lung cancer intervention. This project implements a **3D binary classification pipeline** that distinguishes between **Benign (`0`)** and **Malignant (`1`)** nodules using volumetric CT sub-volumes from the LIDC-IDRI dataset.
+
+Rather than relying on an uninterpretable black box, this project benchmarks a **Classical Machine Learning baseline** (Random Forest trained on 15 morphological and first-order intensity statistics) against an end-to-end **Volumetric Deep Learning model** (adapted 3D ResNet-18). Spatial decision plausibility is clinically verified using **3D Gradient-weighted Class Activation Mapping (Grad-CAM)** overlaid directly onto central axial CT planes.
+
+### Exact Input and Output Formats
+
+- **Input:**
+  - **For 3D CNN:** A single-channel 3D volumetric tensor of shape $1 \times 32 \times 32 \times 32$ (Depth, Height, Width in voxels, lung-windowed to $[-1000, 400]\text{ HU}$ and min-max scaled to $[0.0, 1.0]$).
+  - **For Classical ML Baseline:** A 1D feature vector of 15 radiologist-annotated morphological attributes and 3D intensity summary statistics extracted from the $32^3$ region of interest (ROI).
+  - **For Custom Inference:** Supports `.npy` 3D volumes, `.nii` / `.nii.gz` CT scans, and 2D `.png` / `.jpg` slices.
+- **Output:**
+  - Diagnostic class prediction: **Benign (`0`)** or **Malignant (`1`)**.
+  - Malignancy probability $p \in [0.0, 1.0]$ and model confidence score.
+  - A $32 \times 32 \times 32$ 3D Grad-CAM activation heatmap overlaid on the central axial CT slice.
+
+---
+
+## 2. End-to-End Pipeline Architecture
+
+```
+[Raw LIDC-IDRI Cohort (1,176 NIfTI 3D Patches)]
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│ STAGE 1: DATASET CURATION & LEAKAGE-FREE SPLIT              │
+│ - Parse 1,176 NIfTI sub-volumes & metadata dictionaries     │
+│ - Consolidate radiologist malignancy scores (1 to 5 scale)  │
+│ - Exclude indeterminate cases (mean score == 3.0)           │
+│ - Axial reorientation: (128, 128, 64) -> (64, 128, 128)     │
+│ - Center crop to 32×32×32 voxel regions of interest (ROIs)  │
+│ - Lung windowing: [-1000, 400] HU -> Min-Max scaled [0, 1]  │
+│ - SeriesInstanceUID Grouped Split (70% Train, 15% Val, 15% Test)│
+└──────────────┬──────────────────────────────┬───────────────┘
+               │                              │
+               ▼                              ▼
+┌──────────────────────────────┐ ┌──────────────────────────────┐
+│ STAGE 2A: CLASSICAL BASELINE │ │ STAGE 2B: 3D DEEP LEARNING   │
+│ - 15 Tabular Morphological & │ │ - 1×32×32×32 Volumetric Tensor│
+│   Intensity HU Descriptors   │ │ - 3D ResNet-18 (r3d_18)      │
+│ - Balanced Random Forest     │ │ - BCEWithLogitsLoss + Adam   │
+│   Classifier (150 trees)     │ │ - Data Augmentation (Flips,  │
+│                              │ │   In-plane 90° Rotations)    │
+└──────────────┬───────────────┘ └──────────────┬───────────────┘
+               │                                │
+               └───────────────┬────────────────┘
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ STAGE 3: EXPLAINABLE AI (XAI) & EVALUATION                  │
+│ - Comparative Test Metrics: Accuracy, ROC-AUC, Sensitivity, │
+│   Specificity, Precision, and F1-Score                      │
+│ - Hook into 3D ResNet-18 layer4 residual blocks             │
+│ - Generate 3D Grad-CAM volumetric activation maps           │
+│ - Alpha-blended visual overlay on central axial CT slices   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Modular Codebase Architecture (`lung_nodule`)
+
+The repository is organized into a clean, reusable Python package under `src/lung_nodule/`:
+
+```
+2026-hybrid-xai-lung-nodule/
+├── pyproject.toml                 # Package metadata and dependencies
+├── setup.py                       # Setuptools installation script
+├── src/
+│   └── lung_nodule/
+│       ├── __init__.py            # Clean public API exports
+│       ├── config.py              # Centralized paths, constants, and hyperparameters
+│       ├── data/
+│       │   ├── __init__.py
+│       │   ├── dataset.py         # PyTorch Nodule3DDataset with 3D data augmentation
+│       │   ├── features.py        # 12 handcrafted volumetric intensity & density statistics
+│       │   ├── preprocessing.py   # HU windowing, 3D cropping/padding, multi-format loaders
+│       │   └── splitter.py        # Scan-level grouped splitting with zero-leakage guarantee
+│       ├── models/
+│       │   ├── __init__.py
+│       │   ├── classical.py       # Random Forest baseline trainer and evaluator
+│       │   └── resnet3d.py        # 3D ResNet-18 architecture adapted for 1-channel CT
+│       ├── utils/
+│       │   ├── __init__.py
+│       │   ├── device.py          # Device selection (CUDA / MPS / CPU) and seed management
+│       │   └── metrics.py         # Clinical metrics (Accuracy, ROC-AUC, Sensitivity, Specificity, F1)
+│       └── xai/
+│           ├── __init__.py
+│           ├── gradcam.py         # Volumetric 3D Grad-CAM engine with backward hooks
+│           └── visualizer.py      # Multi-panel XAI grids, ROC curves, and overlay plots
+├── lidc_processed/                # Processed 32x32x32 .npy patches and split CSVs
+├── results/                       # Model checkpoints, metric tables, and visual artifacts
+├── custom_test_inputs/            # Sample inputs for testing (.npy, .png, etc.)
+├── stage1_fast_prep.py            # CLI entry point: Stage 1 Dataset Preprocessing
+├── stage1_stream_and_extract.py   # CLI entry point: Streaming TCIA/pylidc extractor
+├── stage2_train_and_compare.py    # CLI entry point: Stage 2 Training & Benchmarking
+├── stage3_gradcam_eval.py         # CLI entry point: Stage 3 3D Grad-CAM Generation
+├── test_inference.py              # CLI entry point: Sanity verification on held-out test set
+├── test_custom_sample.py          # CLI entry point: Single-sample prediction & XAI overlay
+├── download_test_samples.py       # CLI entry point: Benchmark test data downloader
+└── app.py                         # Streamlit interactive decision support web dashboard
+```
+
+---
+
+## 4. Dataset Engineering Details
+
+- **Source Cohort:** LIDC-IDRI pre-extracted nodule benchmark containing 1,176 3D volumes in compressed NIfTI format (`.nii.gz`) with spatial dimensions $(128, 128, 64)$ and paired metadata (`LIDC-IDRI_1176.npy`).
+- **Consensus Malignancy Formulation:** Each nodule was evaluated by up to 4 board-certified thoracic radiologists on an ordinal scale from 1 (Highly Unlikely) to 5 (Highly Suspicious):
+  $$\bar{M} = \frac{1}{K}\sum_{i=1}^K M_i$$
+  - $\bar{M} < 3.0 \rightarrow$ **Benign (`0`)**
+  - $\bar{M} > 3.0 \rightarrow$ **Malignant (`1`)**
+  - $\bar{M} = 3.0 \rightarrow$ **Indeterminate / Equivocal (Excluded from binary supervision)**
+- **Hounsfield Unit (HU) Windowing & Normalization:**
+  $$\text{HU}_{\text{clipped}} = \text{clip}(V, -1000.0, 400.0), \quad V_{\text{norm}} = \frac{\text{HU}_{\text{clipped}} + 1000.0}{1400.0}$$
+- **Data Leakage Mitigation:** Splitting was performed using `GroupShuffleSplit` strictly grouped on `SeriesInstanceUID`. Multiple nodules originating from the same CT scan series were confined to either the training, validation, or test partition—preventing scanner calibration and parenchymal tissue leakage.
+
+---
+
+## 5. Experimental Results
+
+Quantitative performance evaluated on the completely held-out, scan-disjoint test set:
+
+| Model Architecture | Input Modality | Accuracy | ROC-AUC | Sensitivity (Recall) | Specificity | F1-Score |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Random Forest Baseline** | 15 Tabular Features | 0.8129 | 0.8441 | 0.8039 | 0.8173 | 0.7387 |
+| **3D ResNet-18 (Deep CNN)** | $32^3$ Volumetric ROI | **0.8645** | **0.9256** | **0.8627** | **0.8654** | **0.8073** |
+
+*All metrics are automatically generated and recorded in `results/model_comparison_metrics.csv`.*
+
+### Key Findings
+1. **Volumetric Representation Learning:** The 3D CNN outperforms classical feature engineering on ROC-AUC (+0.0815) and Sensitivity (+0.0588), capturing subtle 3D density gradients and irregular margins without manual parameter tuning.
+2. **Clinical Decision Plausibility:** The 3D Grad-CAM activation maps in `results/gradcam_xai_overlay.png` demonstrate that the deep network's high-activation regions focus on the lesion boundary, spiculation contours, and solid cores rather than background lung parenchyma.
+
+---
+
+## 6. Execution Guide
+
+### Prerequisites & Installation
+
+Install dependencies and install the modular `lung_nodule` package in editable mode:
+```bash
+pip install -e .
+```
+
+Or install with Streamlit support:
+```bash
+pip install -e ".[app]"
+```
+
+### Reproducing the Pipeline
+
+1. **Stage 1 — Dataset Preparation:**
+   ```bash
+   python stage1_fast_prep.py
+   ```
+2. **Stage 2 — Train Models & Benchmark:**
+   ```bash
+   python stage2_train_and_compare.py
+   ```
+3. **Stage 3 — Generate 3D Grad-CAM Overlays:**
+   ```bash
+   python stage3_gradcam_eval.py
+   ```
+4. **Independent Inference Verification:**
+   ```bash
+   python test_inference.py
+   ```
+5. **Custom Single-Sample Prediction & XAI:**
+   ```bash
+   python test_custom_sample.py --input custom_test_inputs/sample_malignant_3d.npy
+   ```
+6. **Launch Interactive Streamlit Web Dashboard:**
+   ```bash
+   streamlit run app.py
+   ```

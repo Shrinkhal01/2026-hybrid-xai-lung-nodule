@@ -23,7 +23,7 @@ elif torch.backends.mps.is_available():
 else:
   DEVICE = torch.device("cpu")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHECKPOINT_PATH = os.path.join(BASE_DIR, "results", "best_3d_resnet18.pth")
 
 

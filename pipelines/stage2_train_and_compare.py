@@ -58,7 +58,7 @@ if torch.cuda.is_available():
 # 2. PATH CONFIGURATION
 # ==============================================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROCESSED_DIR = os.path.join(
     BASE_DIR,

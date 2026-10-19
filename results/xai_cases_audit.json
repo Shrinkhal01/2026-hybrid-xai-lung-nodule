@@ -4,34 +4,34 @@
         "patch_filename": "patch_0150.npy",
         "ground_truth_label": 1,
         "radiologist_mean_malignancy": 4.75,
-        "predicted_probability": 1.0,
+        "predicted_probability": 0.9999,
         "predicted_label": 1,
         "central_slice_index": 16
     },
     {
         "case_description": "Case 2: True Negative (Benign Nodule)",
-        "patch_filename": "patch_0906.npy",
+        "patch_filename": "patch_1166.npy",
         "ground_truth_label": 0,
-        "radiologist_mean_malignancy": 2.6667,
-        "predicted_probability": 0.0011,
+        "radiologist_mean_malignancy": 1.0,
+        "predicted_probability": 0.0009,
         "predicted_label": 0,
         "central_slice_index": 16
     },
     {
         "case_description": "Case 3: High-Confidence Suspicious Lesion",
-        "patch_filename": "patch_0695.npy",
+        "patch_filename": "patch_1083.npy",
         "ground_truth_label": 1,
-        "radiologist_mean_malignancy": 4.25,
-        "predicted_probability": 1.0,
+        "radiologist_mean_malignancy": 4.6667,
+        "predicted_probability": 0.9999,
         "predicted_label": 1,
         "central_slice_index": 16
     },
     {
         "case_description": "Case 4: False Positive (Benign Margin Flaw)",
-        "patch_filename": "patch_0009.npy",
+        "patch_filename": "patch_0017.npy",
         "ground_truth_label": 0,
         "radiologist_mean_malignancy": 2.75,
-        "predicted_probability": 0.7919,
+        "predicted_probability": 0.5728,
         "predicted_label": 1,
         "central_slice_index": 16
     }

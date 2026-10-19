@@ -19,7 +19,7 @@ from torchvision.models.video import r3d_18
 # ==============================================================================
 # 1. SETUP & DEVICE
 # ==============================================================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROCESSED_DIR = os.path.join(BASE_DIR, "lidc_processed")
 PATCHES_DIR = os.path.join(PROCESSED_DIR, "patches")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")

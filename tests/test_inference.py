@@ -13,7 +13,7 @@ import torch.nn as nn
 from torchvision.models.video import r3d_18
 
 # Setup paths and device
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROCESSED_DIR = os.path.join(BASE_DIR, "lidc_processed")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 CHECKPOINT_PATH = os.path.join(RESULTS_DIR, "best_3d_resnet18.pth")

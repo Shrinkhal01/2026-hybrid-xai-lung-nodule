@@ -1,0 +1,16 @@
+numpy
+pandas
+scipy
+scikit-learn
+torch
+torchvision
+matplotlib
+nibabel
+Pillow
+tqdm
+
+[app]
+streamlit
+
+[dev]
+pytest

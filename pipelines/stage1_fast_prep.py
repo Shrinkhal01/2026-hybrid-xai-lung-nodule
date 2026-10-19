@@ -22,7 +22,7 @@ from tqdm import tqdm
 RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_SOURCE_DIR = os.path.join(BASE_DIR, "data_source")
 NIFTI_DIR = os.path.join(DATA_SOURCE_DIR, "LIDC-IDRI")
 METADATA_PATH = os.path.join(DATA_SOURCE_DIR, "LIDC-IDRI_1176.npy")
