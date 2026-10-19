@@ -244,7 +244,7 @@ Exp 3 (Explainability)	3D Grad-CAM on Exp 2 model	4 Test Set Nodules (2 True Pos
                         SINGLE-PHASE PROJECT PIPELINE
 ================================================================================
 
-[STAGE 1: DATASET PREPARATION]
+   [STAGE 1: DATASET PREPARATION]
   Raw LIDC-IDRI (300-400 CT Scans + XMLs)
          │
          ▼  (pylidc clustering + 50% consensus)
@@ -257,7 +257,7 @@ Exp 3 (Explainability)	3D Grad-CAM on Exp 2 model	4 Test Set Nodules (2 True Pos
 
 --------------------------------------------------------------------------------
 
-[STAGE 2: MODEL TRAINING & COMPARISON]
+         [STAGE 2: MODEL TRAINING & COMPARISON]
          ├───────────────────────────────────────┐
          ▼                                       ▼
   (Path A: Classical ML Baseline)         (Path B: Deep Learning Model)
@@ -268,8 +268,8 @@ Exp 3 (Explainability)	3D Grad-CAM on Exp 2 model	4 Test Set Nodules (2 True Pos
 
 --------------------------------------------------------------------------------
 
-[STAGE 3: EXPLAINABILITY & EVALUATION]
-         │                                       
+         [STAGE 3: EXPLAINABILITY & EVALUATION]
+                                                         
          └───────────────┬───────────────────────
                          ▼
           Quantitative Comparison on Test Set
