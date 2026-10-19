@@ -138,26 +138,26 @@ The quantitative performance evaluated on the completely held-out, scan-disjoint
 ## 7. Execution Guide
 
 ### Prerequisites
-```bash
+```
 pip install torch torchvision scikit-learn nibabel numpy pandas scipy matplotlib tqdm
 ```
 
 ### Reproducing the Pipeline
 
 1. **Stage 1 — Dataset Preparation:**
-   ```bash
+   ```
    python stage1_fast_prep.py
    ```
 2. **Stage 2 — Train Models & Benchmark:**
-   ```bash
+   ```
    python stage2_train_and_compare.py
    ```
 3. **Stage 3 — Generate 3D Grad-CAM Overlays:**
-   ```bash
+   ```
    python stage3_gradcam_eval.py
    ```
 4. **Independent Inference Verification:**
-   ```bash
+   ```
    python test_inference.py
    ```
 =======
