@@ -1,0 +1,37 @@
+{
+    "dataset_name": "LIDC-IDRI Nodule Subvolume Benchmark",
+    "total_input_files": 1176,
+    "total_processed_samples": 1000,
+    "total_excluded_indeterminate": 176,
+    "class_distribution": {
+        "benign_0": 554,
+        "malignant_1": 446,
+        "indeterminate_excluded": 176
+    },
+    "split_counts": {
+        "train": 706,
+        "val": 147,
+        "test": 147
+    },
+    "series_counts": {
+        "total_unique_series": 546,
+        "train_series": 382,
+        "val_series": 82,
+        "test_series": 82
+    },
+    "patch_properties": {
+        "spatial_shape": [
+            32,
+            32,
+            32
+        ],
+        "axis_order": "Depth, Height, Width (PyTorch standard C x D x H x W)",
+        "dtype": "float32",
+        "windowing": [
+            -1000.0,
+            400.0
+        ],
+        "normalization": "min-max scaled to [0.0, 1.0]"
+    },
+    "grouping_limitation_declaration": "Splits are strictly grouped by SeriesInstanceUID. In LIDC-IDRI, this prevents scan-level leakage for co-occurring nodules. In rare cases where one patient underwent multiple distinct scan series, patient-level cross-scan correlation is possible due to absence of explicit PatientID tags in this pre-extracted patch metadata."
+}

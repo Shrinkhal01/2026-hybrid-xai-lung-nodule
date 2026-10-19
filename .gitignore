@@ -1,4 +1,17 @@
-# macOS
+# Environments & Virtual Environments
+venv/
+env/
+ENV/
+.env
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# macOS system files
 .DS_Store
 .DS_Store?
 ._*
@@ -7,26 +20,32 @@
 ehthumbs.db
 Thumbs.db
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-.env
+# Model checkpoints & large binary weights (>100MB exceeds GitHub limits)
+.pth
+*.pt
+*.ckpt
+*.bin
+*.h5
+*.hdf5
+*.onnx
+
+# Processed full dataset sub-volume patches & temporary DICOMs
+lidc_processed/patches/
+lidc_processed/temp_dicom/
+lidc_processed/nodules/
+processed_patches/
+raw_data/
 
 # Jupyter Notebook Checkpoints
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 
-# Data & Large Weights / Checkpoints (optional safety)
-*.pt
-*.pth
-*.h5
-*.hdf5
-manifest.csv
-processed_patches/
-raw_data/
+# Large data archives and patch tensors
+data_source/
+lidc_processed/patches/
+lidc_processed/nodules/
+lidc_processed/temp_dicom/
+custom_test_inputs/
+*.nii.gz
+*.nii
+*.npz
