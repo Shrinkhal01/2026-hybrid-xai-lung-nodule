@@ -240,45 +240,157 @@ Exp 3 (Explainability)	3D Grad-CAM on Exp 2 model	4 Test Set Nodules (2 True Pos
 
 12. Final Project Architecture (1 Phase, 3 Internal Stages)
 
-================================================================================
+---
+
                         SINGLE-PHASE PROJECT PIPELINE
-================================================================================
 
-   [STAGE 1: DATASET PREPARATION]
-  Raw LIDC-IDRI (300-400 CT Scans + XMLs)
-         │
-         ▼  (pylidc clustering + 50% consensus)
-  HU Windowing [-1000, 400] & Normalization [0, 1]
-         │
-         ▼  (Crop around centroid & compute mean malignancy m̄)
-  Saved Locally: 32×32×32 .npy Cubes + Labels CSV (m̄ < 3: Benign, m̄ > 3: Malignant)
-         │
-         ▼  (Patient-Stratified Split: 70% Train / 15% Val / 15% Test)
 
---------------------------------------------------------------------------------
+## 🔹 Stage 1: Dataset Preparation
 
-         [STAGE 2: MODEL TRAINING & COMPARISON]
-         ├───────────────────────────────────────┐
-         ▼                                       ▼
-  (Path A: Classical ML Baseline)         (Path B: Deep Learning Model)
-  Extract 10 Summary Stats/Shape Features Feed 1×32×32×32 Volumetric Tensor
-         │                                       │
-         ▼                                       ▼
-  Random Forest Classifier                3D ResNet-18 (BCEWithLogitsLoss)
+```text
+┌───────────────────────────────────────────────────────────────┐
+│                    STAGE 1: DATASET PREPARATION               │
+└───────────────────────────────────────────────────────────────┘
 
---------------------------------------------------------------------------------
+Raw LIDC-IDRI Dataset
+(300–400 CT Scans + XML Annotations)
+                 │
+                 ▼
+     pylidc Clustering + 50% Consensus
+                 │
+                 ▼
+      HU Windowing [-1000, 400]
+          & Normalization [0, 1]
+                 │
+                 ▼
+   Crop Around Nodule Centroid
+   + Compute Mean Malignancy (m̄)
+                 │
+                 ▼
+┌───────────────────────────────────────────────────────────────┐
+│ Saved Locally                                                  │
+│ • 32 × 32 × 32 `.npy` Volumetric Cubes                        │
+│ • Labels CSV                                                   │
+│   - m̄ < 3  → Benign                                           │
+│   - m̄ > 3  → Malignant                                        │
+└───────────────────────────────────────────────────────────────┘
+                 │
+                 ▼
+     Patient-Stratified Data Split
+          70% Train / 15% Val / 15% Test
+```
 
-         [STAGE 3: EXPLAINABILITY & EVALUATION]
-                                                         
-         └───────────────┬───────────────────────
-                         ▼
-          Quantitative Comparison on Test Set
-      (Accuracy, ROC-AUC, Sensitivity, Specificity, F1)
-                         │
-                         ▼
-          3D Grad-CAM on Trained 3D ResNet-18
-      (Central Axial Slice Heatmap Overlay for 4 Test Cases)
-================================================================================
+---
+
+## 🔹 Stage 2: Model Training & Comparison
+
+```text
+┌───────────────────────────────────────────────────────────────┐
+│              STAGE 2: MODEL TRAINING & COMPARISON             │
+└───────────────────────────────────────────────────────────────┘
+
+                         Dataset
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+     ┌─────────────────────┐     ┌────────────────────────┐
+     │ Path A              │     │ Path B                 │
+     │ Classical ML        │     │ Deep Learning          │
+     └─────────────────────┘     └────────────────────────┘
+              │                           │
+              ▼                           ▼
+   Extract 10 Summary              Input:
+   Statistics / Shape              1 × 32 × 32 × 32
+   Features                        Volumetric Tensor
+              │                           │
+              ▼                           ▼
+   Random Forest Classifier       3D ResNet-18
+                                  (BCEWithLogitsLoss)
+```
+
+---
+
+## 🔹 Stage 3: Explainability & Evaluation
+
+```text
+┌───────────────────────────────────────────────────────────────┐
+│              STAGE 3: EXPLAINABILITY & EVALUATION             │
+└───────────────────────────────────────────────────────────────┘
+
+                ┌──────────────────────────────┐
+                │ Quantitative Test-Set        │
+                │ Comparison                   │
+                └──────────────────────────────┘
+                            │
+                            ▼
+              ┌──────────────────────────────┐
+              │ Evaluation Metrics            │
+              │ • Accuracy                    │
+              │ • ROC-AUC                     │
+              │ • Sensitivity                 │
+              │ • Specificity                 │
+              │ • F1 Score                    │
+              └──────────────────────────────┘
+                            │
+                            ▼
+              ┌──────────────────────────────┐
+              │ 3D Grad-CAM                  │
+              │ on Trained 3D ResNet-18      │
+              └──────────────────────────────┘
+                            │
+                            ▼
+              Central Axial Slice Heatmap
+                     Overlay for
+                    4 Test Cases
+```
+
+---
+
+## 🔹 Overall Pipeline
+
+```text
+┌──────────────────────┐
+│   LIDC-IDRI Dataset  │
+└──────────┬───────────┘
+           ▼
+┌──────────────────────┐
+│ Data Preprocessing   │
+│ & Nodule Extraction  │
+└──────────┬───────────┘
+           ▼
+┌──────────────────────┐
+│ 32³ Volume Cubes +   │
+│ Malignancy Labels    │
+└──────────┬───────────┘
+           ▼
+┌──────────────────────┐
+│ Patient-Stratified   │
+│ Train / Val / Test   │
+└──────────┬───────────┘
+           │
+     ┌─────┴─────┐
+     ▼           ▼
+┌───────────┐ ┌───────────────┐
+│ Random    │ │ 3D ResNet-18  │
+│ Forest    │ │ Deep Learning │
+└─────┬─────┘ └───────┬───────┘
+      │               │
+      └───────┬───────┘
+              ▼
+┌──────────────────────────┐
+│ Quantitative Evaluation  │
+│ Accuracy / ROC-AUC /     │
+│ Sensitivity / Specificity│
+│ / F1                     │
+└────────────┬─────────────┘
+             ▼
+┌──────────────────────────┐
+│ 3D Grad-CAM              │
+│ Explainability Analysis  │
+└──────────────────────────┘
+```
+
+---   
 
 
 13. What Should NOT Be Implemented
